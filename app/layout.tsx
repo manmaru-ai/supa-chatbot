@@ -11,8 +11,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "AI Chat Assistant",
-  description: "24時間365日対応のAIチャットボット",
+  title: "高専ChatBot",
+  description: "高等専門学校の学生生活をサポートする24時間365日対応のAIアシスタント",
 };
 
 const geistSans = Geist({
@@ -39,7 +39,7 @@ export default function RootLayout({
               <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
                 <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
                   <Link href="/" className="font-semibold text-xl hover:opacity-80">
-                    AI Chat Assistant
+                    高専ChatBot
                   </Link>
                   <div className="flex items-center gap-4">
                     <HeaderAuth />

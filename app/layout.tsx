@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
 import "./globals.css";
+import { GeistSans } from "geist/font/sans";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -11,7 +12,28 @@ const defaultUrl = process.env.VERCEL_URL
 export const metadata = {
   metadataBase: new URL(defaultUrl),
   title: "高専ChatBot",
-  description: "高等専門学校の学生生活をサポートする24時間365日対応のAIアシスタント",
+  description: "高専生の学習・学生生活を強力にサポートするAIチャットボット",
+  icons: {
+    icon: [
+      {
+        url: "/favicon.ico",
+        sizes: "any",
+      },
+    ],
+    apple: [
+      {
+        url: "/android-chrome-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        url: "/android-chrome-512x512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
+    ],
+  },
+  manifest: "/manifest.json"
 };
 
 const geistSans = Geist({
@@ -21,11 +43,15 @@ const geistSans = Geist({
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="ja" className={geistSans.className} suppressHydrationWarning>
+    <html lang="ja" className={GeistSans.className} suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/android-chrome-192x192.png" sizes="192x192" type="image/png" />
+      </head>
       <body className="bg-background text-foreground">
         <ThemeProvider
           attribute="class"

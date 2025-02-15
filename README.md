@@ -56,7 +56,7 @@
 ## 技術スタック
 
 - **フロントエンド**:
-    - Next.js (App Router) v14.x
+    - Next.js (App Router) v15.x
     - TypeScript v5.x
     - Tailwind CSS v3.x
     - shadcn/ui (UIコンポーネント): Button, Card, Input, Label, Textarea, Checkbox, DropdownMenu, Badge, Progress

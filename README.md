@@ -8,11 +8,15 @@
 
 <p align="center">
   <a href="#サービスの概要"><strong>サービスの概要</strong></a> ·
+  <a href="#開発の背景"><strong>開発の背景</strong></a> ·
   <a href="#特徴と機能の説明"><strong>特徴と機能の説明</strong></a> ·
-  <a href="#デモ"><strong>デモ</strong></a> ·
   <a href="#技術スタック"><strong>技術スタック</strong></a> ·
-  <a href="#github-actionsによるsupabaseのsleep対策"><strong>GitHub ActionsによるSupabaseのSleep対策</strong></a> ·
-  <a href="#vercelへのデプロイ"><strong>Vercelへのデプロイ</strong></a> 
+  <a href="#システム構成図"><strong>システム構成図</strong></a> ·
+  <a href="#github-actionsによるsupabaseのsleep対策"><strong>GitHub Actionsによる対策</strong></a> ·
+  <a href="#vercelへのデプロイ"><strong>デプロイ方法</strong></a> ·
+  <a href="#開発期間・体制"><strong>開発体制</strong></a> ·
+  <a href="#工夫した点・苦労した点"><strong>工夫点</strong></a> ·
+  <a href="#既知の課題と今後の展望"><strong>今後の展望</strong></a>
 </p>
 <br/>
 

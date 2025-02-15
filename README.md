@@ -12,9 +12,7 @@
   <a href="#デモ"><strong>デモ</strong></a> ·
   <a href="#技術スタック"><strong>技術スタック</strong></a> ·
   <a href="#github-actionsによるsupabaseのsleep対策"><strong>GitHub ActionsによるSupabaseのSleep対策</strong></a> ·
-  <a href="#vercelへのデプロイ"><strong>Vercelへのデプロイ</strong></a> ·
-  <a href="#ポートフォリオへの掲載"><strong>ポートフォリオへの掲載</strong></a> ·
-  <a href="#評価について"><strong>評価について</strong></a>
+  <a href="#vercelへのデプロイ"><strong>Vercelへのデプロイ</strong></a> 
 </p>
 <br/>
 

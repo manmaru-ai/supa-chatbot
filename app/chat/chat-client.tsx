@@ -4,12 +4,13 @@ import { User } from "@supabase/supabase-js";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, FileText, MessageSquare, Upload, X, PlusCircle, ChevronLeft, ClipboardCopy, ThumbsUp, ThumbsDown, Plus } from "lucide-react";
+import { Send, FileText, MessageSquare, Upload, X, PlusCircle, ChevronLeft, ClipboardCopy, ThumbsUp, ThumbsDown, Plus, Image as ImageIcon } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface Message {
   role: "user" | "assistant";
@@ -27,6 +28,7 @@ interface UploadedFile {
   id: string;
   name: string;
   type: string;
+  url: string;
 }
 
 interface Conversation {
@@ -249,6 +251,7 @@ export function ChatPage({ user }: { user: User }) {
           id: data.id,
           name: data.name,
           type: data.mime_type,
+          url: URL.createObjectURL(file),
         });
       }
 
@@ -410,12 +413,23 @@ export function ChatPage({ user }: { user: User }) {
                                   : "bg-blue-400"
                               )}
                             >
-                              <FileText className={cn(
-                                "h-3 w-3",
-                                message.role === "assistant"
-                                  ? "text-gray-500"
-                                  : "text-white"
-                              )} />
+                              {file.type.startsWith("image/") && file.url ? (
+                                <div className="relative w-10 h-10">
+                                  <Image
+                                    src={file.url}
+                                    alt={file.name}
+                                    fill
+                                    className="object-cover rounded"
+                                  />
+                                </div>
+                              ) : (
+                                <FileText className={cn(
+                                  "h-3 w-3",
+                                  message.role === "assistant"
+                                    ? "text-gray-500"
+                                    : "text-white"
+                                )} />
+                              )}
                               <span className={cn(
                                 "text-xs truncate max-w-[120px]",
                                 message.role === "assistant"
@@ -457,9 +471,20 @@ export function ChatPage({ user }: { user: User }) {
                 {currentChat.files.map((file) => (
                   <div
                     key={file.id}
-                    className="flex items-center gap-2 bg-gray-100 rounded-md px-2 py-1"
+                    className="group relative flex items-center gap-2 bg-gray-100 rounded-md px-2 py-1"
                   >
-                    <FileText className="h-3 w-3 text-gray-500" />
+                    {file.type.startsWith("image/") && file.url ? (
+                      <div className="relative w-10 h-10">
+                        <Image
+                          src={file.url}
+                          alt={file.name}
+                          fill
+                          className="object-cover rounded"
+                        />
+                      </div>
+                    ) : (
+                      <FileText className="h-3 w-3 text-gray-500" />
+                    )}
                     <span className="text-xs text-gray-600 truncate max-w-[150px]">
                       {file.name}
                     </span>
@@ -500,7 +525,13 @@ export function ChatPage({ user }: { user: User }) {
                       disabled={isUploading}
                       onClick={() => document.getElementById("file-upload")?.click()}
                     >
-                      <Plus className="h-5 w-5 text-gray-500" />
+                      {isUploading ? (
+                        <div className="animate-spin">
+                          <Upload className="h-5 w-5 text-gray-500" />
+                        </div>
+                      ) : (
+                        <Plus className="h-5 w-5 text-gray-500" />
+                      )}
                     </Button>
                     <input
                       id="file-upload"

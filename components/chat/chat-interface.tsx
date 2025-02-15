@@ -4,7 +4,7 @@ import { User } from "@supabase/supabase-js";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, FileText } from "lucide-react";
+import { Send, FileText, MessageSquare } from "lucide-react";
 import { ChatMessage } from "@/components/chat/chat-message";
 import { ChatSidebar } from "@/components/chat/chat-sidebar";
 import { FileUpload } from "@/components/chat/file-upload";
@@ -19,6 +19,8 @@ export function ChatInterface({ user }: { user: User }) {
   });
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [editingMessageIndex, setEditingMessageIndex] = useState<number | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,20 +128,100 @@ export function ChatInterface({ user }: { user: User }) {
     }));
   };
 
+  const handleEditMessage = (index: number, newContent: string) => {
+    if (currentChat.messages[index].role !== 'user') return;
+    
+    setCurrentChat(prev => ({
+      ...prev,
+      messages: prev.messages.map((msg, i) => 
+        i === index ? { ...msg, content: newContent } : msg
+      )
+    }));
+    setEditingMessageIndex(null);
+  };
+
+  const handleCopyMessage = async (content: string) => {
+    try {
+      await navigator.clipboard.writeText(content);
+    } catch (error) {
+      console.error('Failed to copy message:', error);
+    }
+  };
+
   return (
-    <div className="flex h-screen">
-      <ChatSidebar
-        user={user}
-        currentConversationId={currentChat.id}
-        onNewChat={handleNewChat}
-        onSelectChat={handleSelectChat}
-      />
+    <div className="flex h-screen w-full overflow-hidden">
+      {/* モバイル用のサイドバートグルボタン */}
+      <button
+        className="fixed top-4 left-4 z-50 md:hidden bg-white rounded-full p-2 shadow-lg"
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+      >
+        <MessageSquare className="h-6 w-6" />
+      </button>
+
+      {/* サイドバー */}
+      <div className={`
+        fixed md:relative
+        w-[280px] md:w-64
+        h-screen
+        transition-transform duration-300
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        md:translate-x-0
+        z-40
+      `}>
+        <ChatSidebar
+          user={user}
+          currentConversationId={currentChat.id}
+          onNewChat={handleNewChat}
+          onSelectChat={handleSelectChat}
+        />
+      </div>
       
-      <div className="flex-1 flex flex-col h-screen p-4">
-        <div className="flex-1 overflow-y-auto space-y-4 mb-4">
+      {/* メインコンテンツ */}
+      <div className="flex-1 flex flex-col h-screen w-full">
+        {/* メッセージ一覧 */}
+        <div className="flex-1 overflow-y-auto space-y-4 p-4 md:p-6">
           {currentChat.messages.map((message, i) => (
-            <div key={i} className="space-y-2">
-              <ChatMessage message={message} />
+            <div key={i} className="space-y-2 group">
+              <div className="relative">
+                {editingMessageIndex === i ? (
+                  <div className="flex gap-2">
+                    <Textarea
+                      value={message.content}
+                      onChange={(e) => handleEditMessage(i, e.target.value)}
+                      className="flex-1"
+                      autoFocus
+                    />
+                    <Button
+                      size="sm"
+                      onClick={() => setEditingMessageIndex(null)}
+                    >
+                      保存
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <ChatMessage message={message} />
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {message.role === 'user' && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setEditingMessageIndex(i)}
+                        >
+                          編集
+                        </Button>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleCopyMessage(message.content)}
+                      >
+                        コピー
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
               {message.files && message.files.length > 0 && (
                 <div className="flex flex-wrap gap-2 ml-4">
                   {message.files.map((file) => (
@@ -162,7 +244,8 @@ export function ChatInterface({ user }: { user: User }) {
           )}
         </div>
 
-        <div className="space-y-4">
+        {/* 入力エリア */}
+        <div className="p-4 md:p-6 space-y-4 border-t bg-white">
           <div className="space-y-2">
             <FileUpload 
               onFileUpload={handleFileUpload}
@@ -179,10 +262,10 @@ export function ChatInterface({ user }: { user: User }) {
           <form onSubmit={handleSubmit} className="flex gap-2">
             <Textarea
               value={input}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInput(e.target.value)}
+              onChange={(e) => setInput(e.target.value)}
               placeholder="メッセージを入力..."
               className="min-h-[60px] max-h-[200px]"
-              onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+              onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
                   handleSubmit(e);

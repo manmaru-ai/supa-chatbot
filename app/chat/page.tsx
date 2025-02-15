@@ -1,6 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { ChatInterface } from "@/components/chat/chat-interface";
+import { ChatPage as ChatPageClient } from "./chat-client";
 
 export default async function ChatPage() {
   const supabase = await createClient();
@@ -13,9 +13,5 @@ export default async function ChatPage() {
     return redirect("/sign-in");
   }
 
-  return (
-    <div className="flex-1 flex flex-col w-full max-w-4xl mx-auto">
-      <ChatInterface user={user} />
-    </div>
-  );
+  return <ChatPageClient user={user} />;
 } 

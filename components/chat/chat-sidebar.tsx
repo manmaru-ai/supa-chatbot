@@ -44,27 +44,31 @@ export function ChatSidebar({
   };
 
   return (
-    <div className="w-64 h-screen bg-gray-50 border-r p-4">
-      <Button 
-        onClick={onNewChat}
-        className="w-full mb-4 flex items-center gap-2"
-      >
-        <PlusCircle className="h-4 w-4" />
-        新規チャット
-      </Button>
+    <div className="w-full h-full bg-gray-50 border-r overflow-hidden flex flex-col">
+      <div className="p-4 border-b">
+        <Button 
+          onClick={onNewChat}
+          className="w-full flex items-center gap-2"
+        >
+          <PlusCircle className="h-4 w-4" />
+          新規チャット
+        </Button>
+      </div>
 
-      <div className="space-y-2">
-        {conversations.map((conversation) => (
-          <Button
-            key={conversation.id}
-            variant={currentConversationId === conversation.id ? "secondary" : "ghost"}
-            className="w-full justify-start text-left flex items-center gap-2"
-            onClick={() => onSelectChat(conversation.id)}
-          >
-            <MessageSquare className="h-4 w-4" />
-            <span className="truncate">{conversation.name || "新しいチャット"}</span>
-          </Button>
-        ))}
+      <div className="flex-1 overflow-y-auto p-2">
+        <div className="space-y-1">
+          {conversations.map((conversation) => (
+            <Button
+              key={conversation.id}
+              variant={currentConversationId === conversation.id ? "secondary" : "ghost"}
+              className="w-full justify-start text-left flex items-center gap-2 px-3"
+              onClick={() => onSelectChat(conversation.id)}
+            >
+              <MessageSquare className="h-4 w-4 flex-shrink-0" />
+              <span className="truncate text-sm">{conversation.name || "新しいチャット"}</span>
+            </Button>
+          ))}
+        </div>
       </div>
     </div>
   );

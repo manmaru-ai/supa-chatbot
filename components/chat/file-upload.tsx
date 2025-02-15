@@ -69,12 +69,12 @@ export function FileUpload({
         {currentFiles.map((file) => (
           <div
             key={file.id}
-            className="flex items-center gap-2 bg-gray-100 rounded-md px-3 py-1"
+            className="flex items-center gap-2 bg-gray-100 rounded-md px-3 py-1 max-w-full sm:max-w-[200px]"
           >
-            <span className="text-sm truncate max-w-[200px]">{file.name}</span>
+            <span className="text-sm truncate flex-1">{file.name}</span>
             <button
               onClick={() => removeFile(file.id)}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:text-gray-700 flex-shrink-0"
             >
               <X className="h-4 w-4" />
             </button>
@@ -87,12 +87,14 @@ export function FileUpload({
           type="button"
           variant="outline"
           size="sm"
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 w-full sm:w-auto"
           disabled={isUploading}
           onClick={() => document.getElementById("file-upload")?.click()}
         >
           <Upload className="h-4 w-4" />
-          {isUploading ? "アップロード中..." : "ファイルを選択"}
+          <span className="truncate">
+            {isUploading ? "アップロード中..." : "ファイルを選択"}
+          </span>
         </Button>
         <input
           id="file-upload"

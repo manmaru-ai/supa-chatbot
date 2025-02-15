@@ -14,8 +14,8 @@
   <a href="#システム構成図"><strong>システム構成図</strong></a> ·
   <a href="#github-actionsによるsupabaseのsleep対策"><strong>GitHub Actionsによる対策</strong></a> ·
   <a href="#vercelへのデプロイ"><strong>デプロイ方法</strong></a> ·
-  <a href="#開発期間・体制"><strong>開発体制</strong></a> ·
-  <a href="#工夫した点・苦労した点"><strong>工夫点</strong></a> ·
+  <a href="#開発期間体制"><strong>開発体制</strong></a> ·
+  <a href="#工夫した点苦労した点"><strong>工夫点</strong></a> ·
   <a href="#既知の課題と今後の展望"><strong>今後の展望</strong></a>
 </p>
 <br/>

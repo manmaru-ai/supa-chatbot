@@ -4,7 +4,7 @@ import { User } from "@supabase/supabase-js";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, FileText, MessageSquare, Upload, X, PlusCircle, ChevronLeft } from "lucide-react";
+import { Send, FileText, MessageSquare, Upload, X, PlusCircle, ChevronLeft, ClipboardCopy, ThumbsUp, ThumbsDown } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -43,10 +43,10 @@ export function ChatPage({ user }: { user: User }) {
   });
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [editingMessageIndex, setEditingMessageIndex] = useState<number | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [copiedMessageId, setCopiedMessageId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchConversations();
@@ -240,21 +240,11 @@ export function ChatPage({ user }: { user: User }) {
     }));
   };
 
-  const handleEditMessage = (index: number, newContent: string) => {
-    if (currentChat.messages[index].role !== 'user') return;
-    
-    setCurrentChat(prev => ({
-      ...prev,
-      messages: prev.messages.map((msg, i) => 
-        i === index ? { ...msg, content: newContent } : msg
-      )
-    }));
-    setEditingMessageIndex(null);
-  };
-
-  const handleCopyMessage = async (content: string) => {
+  const handleCopyMessage = async (content: string, index: number) => {
     try {
       await navigator.clipboard.writeText(content);
+      setCopiedMessageId(index);
+      setTimeout(() => setCopiedMessageId(null), 2000); // 2秒後に非表示
     } catch (error) {
       console.error('Failed to copy message:', error);
     }
@@ -314,7 +304,7 @@ export function ChatPage({ user }: { user: User }) {
       {/* メインコンテンツ */}
       <div className="flex-1 flex flex-col h-screen w-full">
         {/* ヘッダー */}
-        <div className="flex items-center border-b px-4 py-2">
+        <div className="flex items-center border-b px-4 py-2 bg-white">
           <Button
             variant="ghost"
             size="icon"
@@ -328,96 +318,81 @@ export function ChatPage({ user }: { user: User }) {
           </h1>
         </div>
 
-        {/* メッセージ一覧 */}
-        <div className="flex-1 overflow-y-auto space-y-4 p-4">
-          {currentChat.messages.map((message, i) => (
-            <div key={i} className="group relative">
-              <div className={cn(
-                "relative rounded-lg px-4 py-2 transition-colors",
-                message.role === "assistant" 
-                  ? "bg-gray-100" 
-                  : "bg-blue-500 text-white"
-              )}>
-                <div className={cn(
-                  "prose max-w-none",
-                  message.role === "user" && "prose-invert"
-                )}>
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    components={{
-                      code({ inline, className, children, ...props }: any) {
-                        const match = /language-(\w+)/.exec(className || '');
-                        return !inline && match ? (
-                          <SyntaxHighlighter
-                            style={vscDarkPlus as any}
-                            language={match[1]}
-                            PreTag="div"
-                            {...props}
-                          >
-                            {String(children).replace(/\n$/, '')}
-                          </SyntaxHighlighter>
-                        ) : (
-                          <code className={className} {...props}>
-                            {children}
-                          </code>
-                        );
-                      }
-                    }}
-                  >
-                    {message.content}
-                  </ReactMarkdown>
-                </div>
-
-                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {message.role === 'user' && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setEditingMessageIndex(i)}
-                      className="text-white"
-                    >
-                      編集
-                    </Button>
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleCopyMessage(message.content)}
-                    className={message.role === "assistant" ? "text-gray-700" : "text-white"}
-                  >
-                    コピー
-                  </Button>
-                </div>
+        {/* メッセージエリア */}
+        <div className="flex-1 overflow-y-auto pb-36">
+          <div className="max-w-3xl mx-auto py-8 px-4">
+            {currentChat.messages.length === 0 ? (
+              <div className="text-center py-20">
+                <h2 className="text-2xl font-bold mb-2">お手伝いできることはありますか？</h2>
+                <p className="text-gray-500">
+                  メッセージを入力してチャットを開始してください
+                </p>
               </div>
+            ) : (
+              <div className="space-y-6">
+                {currentChat.messages.map((message, i) => (
+                  <div key={i} className="group">
+                    <div className={cn(
+                      "relative rounded-lg px-4 py-2 transition-colors max-w-[85%] shadow-sm",
+                      message.role === "assistant" 
+                        ? "bg-gray-100 mr-auto" 
+                        : "bg-blue-500 text-white ml-auto"
+                    )}>
+                      <div className={cn(
+                        "prose max-w-none",
+                        message.role === "user" && "prose-invert"
+                      )}>
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            code({ inline, className, children, ...props }: any) {
+                              const match = /language-(\w+)/.exec(className || '');
+                              return !inline && match ? (
+                                <SyntaxHighlighter
+                                  style={vscDarkPlus as any}
+                                  language={match[1]}
+                                  PreTag="div"
+                                  {...props}
+                                >
+                                  {String(children).replace(/\n$/, '')}
+                                </SyntaxHighlighter>
+                              ) : (
+                                <code className={className} {...props}>
+                                  {children}
+                                </code>
+                              );
+                            }
+                          }}
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                      </div>
 
-              {message.files && message.files.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {message.files.map((file) => (
-                    <div
-                      key={file.id}
-                      className="flex items-center gap-2 bg-gray-100 rounded-md px-3 py-1"
-                    >
-                      <FileText className="h-4 w-4 text-gray-500" />
-                      <span className="text-sm text-gray-600">{file.name}</span>
+                      {message.role === "assistant" && (
+                        <div className="flex gap-2 mt-2 items-center justify-end text-xs text-gray-500">
+                          <button
+                            onClick={() => handleCopyMessage(message.content, i)}
+                            className="flex items-center gap-1 hover:text-gray-700"
+                          >
+                            <ClipboardCopy className="h-3 w-3" />
+                            {copiedMessageId === i ? "コピーしました" : "コピー"}
+                          </button>
+                        </div>
+                      )}
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-          {currentChat.messages.length === 0 && (
-            <div className="text-center text-muted-foreground pt-20">
-              メッセージを入力してチャットを開始してください
-            </div>
-          )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* 入力エリア */}
-        <div className="border-t bg-white p-4">
-          <div className="space-y-4 max-w-4xl mx-auto">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg">
+          <div className="max-w-3xl mx-auto p-4">
             {/* ファイルアップロード */}
-            <div className="space-y-2">
-              <div className="flex flex-wrap gap-2">
+            <div className="mb-4">
+              <div className="flex flex-wrap gap-2 mb-2">
                 {currentChat.files.map((file) => (
                   <div
                     key={file.id}
@@ -436,36 +411,34 @@ export function ChatPage({ user }: { user: User }) {
                 ))}
               </div>
 
-              <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2"
-                  disabled={isUploading}
-                  onClick={() => document.getElementById("file-upload")?.click()}
-                >
-                  <Upload className="h-4 w-4" />
-                  {isUploading ? "アップロード中..." : "ファイルを選択"}
-                </Button>
-                <input
-                  id="file-upload"
-                  type="file"
-                  multiple
-                  className="hidden"
-                  onChange={handleFileUpload}
-                  accept=".txt,.md,.pdf,.doc,.docx,.csv,.jpg,.jpeg,.png,.gif"
-                />
-              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+                disabled={isUploading}
+                onClick={() => document.getElementById("file-upload")?.click()}
+              >
+                <Upload className="h-4 w-4" />
+                {isUploading ? "アップロード中..." : "ファイルを選択"}
+              </Button>
+              <input
+                id="file-upload"
+                type="file"
+                multiple
+                className="hidden"
+                onChange={handleFileUpload}
+                accept=".txt,.md,.pdf,.doc,.docx,.csv,.jpg,.jpeg,.png,.gif"
+              />
             </div>
 
             {/* メッセージ入力 */}
-            <form onSubmit={handleSubmit} className="flex gap-2">
+            <form onSubmit={handleSubmit} className="flex gap-3">
               <Textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="メッセージを入力..."
-                className="min-h-[60px] max-h-[200px]"
+                className="min-h-[60px] max-h-[200px] flex-1 resize-none border-2 focus:ring-2 focus:ring-blue-500"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
@@ -473,8 +446,12 @@ export function ChatPage({ user }: { user: User }) {
                   }
                 }}
               />
-              <Button type="submit" disabled={isLoading}>
-                <Send className="h-4 w-4" />
+              <Button 
+                type="submit" 
+                disabled={isLoading} 
+                className="self-end px-6 py-6 bg-blue-500 hover:bg-blue-600"
+              >
+                <Send className="h-5 w-5" />
               </Button>
             </form>
           </div>

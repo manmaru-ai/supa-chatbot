@@ -4,7 +4,7 @@ import { User } from "@supabase/supabase-js";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, FileText, MessageSquare, Upload, X, PlusCircle, ChevronLeft, ClipboardCopy, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Send, FileText, MessageSquare, Upload, X, PlusCircle, ChevronLeft, ClipboardCopy, ThumbsUp, ThumbsDown, Plus } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -368,6 +368,37 @@ export function ChatPage({ user }: { user: User }) {
                         </ReactMarkdown>
                       </div>
 
+                      {message.files && message.files.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {message.files.map((file) => (
+                            <div
+                              key={file.id}
+                              className={cn(
+                                "flex items-center gap-1 rounded-md px-2 py-1",
+                                message.role === "assistant" 
+                                  ? "bg-white" 
+                                  : "bg-blue-400"
+                              )}
+                            >
+                              <FileText className={cn(
+                                "h-3 w-3",
+                                message.role === "assistant"
+                                  ? "text-gray-500"
+                                  : "text-white"
+                              )} />
+                              <span className={cn(
+                                "text-xs truncate max-w-[120px]",
+                                message.role === "assistant"
+                                  ? "text-gray-600"
+                                  : "text-white"
+                              )}>
+                                {file.name}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
                       {message.role === "assistant" && (
                         <div className="flex gap-2 mt-2 items-center justify-end text-xs text-gray-500">
                           <button
@@ -390,70 +421,81 @@ export function ChatPage({ user }: { user: User }) {
         {/* 入力エリア */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg">
           <div className="max-w-3xl mx-auto p-4">
-            {/* ファイルアップロード */}
-            <div className="mb-4">
-              <div className="flex flex-wrap gap-2 mb-2">
+            {/* ファイルプレビュー */}
+            {currentChat.files.length > 0 && (
+              <div className="mb-2 flex flex-wrap gap-2">
                 {currentChat.files.map((file) => (
                   <div
                     key={file.id}
-                    className="flex items-center gap-2 bg-gray-100 rounded-md px-3 py-1"
+                    className="flex items-center gap-2 bg-gray-100 rounded-md px-2 py-1"
                   >
-                    <span className="text-sm truncate max-w-[150px]">
+                    <FileText className="h-3 w-3 text-gray-500" />
+                    <span className="text-xs text-gray-600 truncate max-w-[150px]">
                       {file.name}
                     </span>
                     <button
                       onClick={() => removeFile(file.id)}
-                      className="text-gray-500 hover:text-gray-700"
+                      className="text-gray-400 hover:text-gray-600"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-3 w-3" />
                     </button>
                   </div>
                 ))}
               </div>
+            )}
 
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2"
-                disabled={isUploading}
-                onClick={() => document.getElementById("file-upload")?.click()}
-              >
-                <Upload className="h-4 w-4" />
-                {isUploading ? "アップロード中..." : "ファイルを選択"}
-              </Button>
-              <input
-                id="file-upload"
-                type="file"
-                multiple
-                className="hidden"
-                onChange={handleFileUpload}
-                accept=".txt,.md,.pdf,.doc,.docx,.csv,.jpg,.jpeg,.png,.gif"
-              />
+            <div className="relative rounded-xl border shadow-sm bg-white">
+              <form onSubmit={handleSubmit} className="flex flex-col">
+                <Textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="メッセージを入力..."
+                  className="min-h-[60px] max-h-[200px] flex-1 resize-none border-0 bg-transparent py-3 px-4 focus:ring-0"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit(e);
+                    }
+                  }}
+                />
+
+                {/* アクションボタン */}
+                <div className="flex items-center justify-between border-t px-3 py-2">
+                  <div className="flex gap-0">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 rounded-full"
+                      disabled={isUploading}
+                      onClick={() => document.getElementById("file-upload")?.click()}
+                    >
+                      <Plus className="h-5 w-5 text-gray-500" />
+                    </Button>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      multiple
+                      className="hidden"
+                      onChange={handleFileUpload}
+                      accept=".txt,.md,.pdf,.doc,.docx,.csv,.jpg,.jpeg,.png,.gif"
+                    />
+                  </div>
+                  <Button 
+                    type="submit" 
+                    disabled={isLoading || !input.trim()} 
+                    className="h-8 rounded-lg bg-black text-white hover:bg-gray-800 px-3 py-2"
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
+              </form>
             </div>
-
-            {/* メッセージ入力 */}
-            <form onSubmit={handleSubmit} className="flex gap-3">
-              <Textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="メッセージを入力..."
-                className="min-h-[60px] max-h-[200px] flex-1 resize-none border-2 focus:ring-2 focus:ring-blue-500"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit(e);
-                  }
-                }}
-              />
-              <Button 
-                type="submit" 
-                disabled={isLoading} 
-                className="self-end px-6 py-6 bg-blue-500 hover:bg-blue-600"
-              >
-                <Send className="h-5 w-5" />
-              </Button>
-            </form>
+            {isUploading && (
+              <div className="mt-2 text-sm text-gray-500 text-center">
+                ファイルをアップロード中...
+              </div>
+            )}
           </div>
         </div>
       </div>

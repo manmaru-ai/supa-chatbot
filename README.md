@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="#サービスの概要"><strong>サービスの概要</strong></a> ·
-  <a href="#主な機能"><strong>主な機能</strong></a> ·
+  <a href="#特徴と機能の説明"><strong>特徴と機能の説明</strong></a> ·
   <a href="#デモ"><strong>デモ</strong></a> ·
   <a href="#技術スタック"><strong>技術スタック</strong></a> ·
   <a href="#github-actionsによるsupabaseのsleep対策"><strong>GitHub ActionsによるSupabaseのSleep対策</strong></a> ·

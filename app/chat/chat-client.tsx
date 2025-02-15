@@ -16,6 +16,8 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   files?: UploadedFile[];
+  tokens: number;
+  timestamp: string;
 }
 
 interface ChatSession {
@@ -80,7 +82,9 @@ export function ChatPage({ user }: { user: User }) {
     const newMessage: Message = { 
       role: "user", 
       content: userMessage,
-      files: currentChat.files 
+      files: currentChat.files,
+      tokens: 0, // 一時的に0を設定
+      timestamp: new Date().toISOString(),
     };
     const newHistory = [...currentChat.messages, newMessage];
     setCurrentChat(prev => ({
@@ -90,23 +94,6 @@ export function ChatPage({ user }: { user: User }) {
     setIsLoading(true);
 
     try {
-      // トークン使用量をチェック
-      const tokenCheckResponse = await fetch("/api/check-token-usage", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          estimatedTokens: Math.ceil(userMessage.length / 4), // 簡易的なトークン数推定
-        }),
-      });
-
-      if (!tokenCheckResponse.ok) {
-        const errorData = await tokenCheckResponse.json();
-        throw new Error(errorData.message || "トークン制限に達しました");
-      }
-
       const files = currentChat.files.map(file => ({
         type: file.type.startsWith("image/") ? "image" : "document",
         transfer_method: "local_file",
@@ -137,9 +124,9 @@ export function ChatPage({ user }: { user: User }) {
       const data = await response.json();
       const answer = data.answer as string;
       const newConversationId = data.conversation_id as string;
+      const totalTokens = data.metadata?.usage?.total_tokens ?? 0;
 
       // トークン使用量を更新
-      const usedTokens = Math.ceil((userMessage.length + answer.length) / 4); // 簡易的なトークン数計算
       await fetch("/api/update-token-usage", {
         method: "POST",
         headers: {
@@ -147,13 +134,26 @@ export function ChatPage({ user }: { user: User }) {
         },
         body: JSON.stringify({
           userId: user.id,
-          tokens: usedTokens,
+          tokens: totalTokens,
         }),
       });
       
+      // メッセージのトークン数を更新
+      const userTokens = data.metadata?.usage?.prompt_tokens ?? 0;
+      const assistantTokens = data.metadata?.usage?.completion_tokens ?? 0;
+      
       setCurrentChat(prev => ({
         id: newConversationId,
-        messages: [...prev.messages, { role: "assistant", content: answer }],
+        messages: [
+          ...prev.messages.slice(0, -1),
+          { ...prev.messages[prev.messages.length - 1], tokens: userTokens },
+          { 
+            role: "assistant", 
+            content: answer,
+            tokens: assistantTokens,
+            timestamp: new Date().toISOString(),
+          }
+        ],
         files: [],
       }));
     } catch (error) {
@@ -165,6 +165,8 @@ export function ChatPage({ user }: { user: User }) {
           {
             role: "assistant",
             content: error instanceof Error ? error.message : "申し訳ありません。エラーが発生しました。",
+            tokens: 0,
+            timestamp: new Date().toISOString(),
           },
         ],
       }));
@@ -201,12 +203,16 @@ export function ChatPage({ user }: { user: User }) {
             role: "user",
             content: msg.query,
             files: msg.message_files || [],
+            tokens: msg.metadata?.usage?.prompt_tokens ?? 0,
+            timestamp: msg.created_at,
           });
         }
         if (msg.answer) {
           messages.push({
             role: "assistant",
             content: msg.answer,
+            tokens: msg.metadata?.usage?.completion_tokens ?? 0,
+            timestamp: msg.created_at,
           });
         }
       });

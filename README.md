@@ -1,104 +1,127 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+[![Next.js and Supabase Starter Kit - 高専ChatBot](public\kosen-chat.png)](https://kosen-ai-chatbot.vercel.app/)
+
+<h1 align="center">高専ChatBot</h1>
 
 <p align="center">
- The fastest way to build apps with Next.js and Supabase
+  高専生の学習・学生生活を強力にサポートするAIチャットボット
 </p>
 
 <p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
+  <a href="#サービスの概要"><strong>サービスの概要</strong></a> ·
+  <a href="#主な機能"><strong>主な機能</strong></a> ·
+  <a href="#デモ"><strong>デモ</strong></a> ·
+  <a href="#技術スタック"><strong>技術スタック</strong></a> ·
+  <a href="#github-actionsによるsupabaseのsleep対策"><strong>GitHub ActionsによるSupabaseのSleep対策</strong></a> ·
+  <a href="#vercelへのデプロイ"><strong>Vercelへのデプロイ</strong></a> ·
+  <a href="#ポートフォリオへの掲載"><strong>ポートフォリオへの掲載</strong></a> ·
+  <a href="#評価について"><strong>評価について</strong></a>
 </p>
 <br/>
 
-## Features
+## サービスの概要
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Middleware
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+**高専ChatBot** は、高等専門学校 (高専) の学生生活を支援するために開発されたAIチャットボットです。専門科目の学習から実験レポートの作成、学生生活の相談まで、AIが24時間365日サポートを提供します。
 
-## Demo
+月間トークン制限内で、学生はAIとの対話を通じて、日々の学習や課題解決を効率的に進めることができます。高専生活をより豊かに、より実りあるものにするための強力なパートナーとして、高専ChatBotをご活用ください。
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+## 主な機能
 
-## Deploy to Vercel
+- **AIチャット機能**: 自然言語による質問応答、専門知識の解説、レポート作成のアドバイスなど、多様なニーズに対応
+- **ファイルアップロード**: 実験データやレポートのファイルをアップロードして、AIに分析やアドバイスを求めることが可能 (対応形式: txt, md, pdf, doc, docx, csv, jpg, jpeg, png, gif)
+- **トークン使用量管理**: 月間のトークン使用量をプロフィールページで確認可能。計画的な利用をサポート (月間100,000トークンまで)
+- **会話履歴**: 過去のチャット履歴を閲覧可能。いつでも以前の相談内容を振り返ることができます
+- **ユーザー認証**: Supabaseによるセキュアなメールアドレス/パスワード認証機能
+- **パスワード再設定**: パスワードを忘れた場合でも、メールアドレスによる再設定が可能
+- **利用規約・プライバシーポリシー**: 利用規約とプライバシーポリシーを明記し、安心して利用できる環境を提供
+- **レスポンシブデザイン**: PC、タブレット、スマートフォンなど、様々なデバイスで快適に利用可能 (Tailwind CSS利用)
 
-Vercel deployment will guide you through creating a Supabase account and project.
+## デモ
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+- **公開URL**: [https://kosen-ai-chatbot.vercel.app/](https://kosen-ai-chatbot.vercel.app/)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+## 技術スタック
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
+- **フロントエンド**:
+    - Next.js (App Router) v14.x
+    - TypeScript v5.x
+    - Tailwind CSS v3.x
+    - shadcn/ui (UIコンポーネント): Button, Card, Input, Label, Textarea, Checkbox, DropdownMenu, Badge, Progress
+    - lucide-react: アイコン
+    - react-markdown v9.x: Markdown表示
+    - react-syntax-highlighter v15.x: コードハイライト
+    - next-themes v0.4.x: ダークモード
+- **バックエンド**:
+    - Dify.ai: AIチャットAPI (Dify API v1)
+    - Supabase: 認証 (Supabase Auth), データベース (Supabase Postgres)
+- **ホスティング**:
+    - Vercel
+- **開発環境・ツール**:
+    - Node.js v20.x
+    - npm v10.x (package manager)
+    - GitHub (リモートリポジトリ)
+    - GitHub Actions (CI/CD, 定期Ping)
+    - VS Code (開発エディタ)
 
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
+## GitHub ActionsによるSupabaseのSleep対策
 
-## Clone and run locally
+Supabaseの無料プランでは、一定期間アクセスがないとデータベースがSleep状態になる場合があります。
+本アプリでは、GitHub Actionsを利用して毎日1回、VercelでホストされているアプリのURLにPingを送信することで、Supabaseインスタンスが自動的にSleep状態になるのを防ぎます。
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
+`.github/workflows/daily-ping.yaml`
 
-2. Create a Next.js app using the Supabase Starter template npx command
+```yaml
+name: Prevent Supabase Sleep (Daily Ping)
 
-   ```bash
-   npx create-next-app --example with-supabase with-supabase-app
-   ```
+on:
+  schedule:
+    # UTC 01:15 AM に実行 (JST 10:15 AM)
+    - cron: "15 1 * * *"
+  workflow_dispatch:
 
-   ```bash
-   yarn create next-app --example with-supabase with-supabase-app
-   ```
+jobs:
+  make_request:
+    runs-on: ubuntu-latest
+    env:
+      TZ: "Asia/Tokyo"
 
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
-   ```
+    steps:
+      - name: Send HTTP GET request
+        run: |
+          curl -X GET "https://kosen-ai-chatbot.vercel.app/" -v --fail || exit 1
 
-3. Use `cd` to change into the app's directory
+      - name: Log request time
+        run: |
+          echo "Keep-alive ping completed at $(date)"
+```
 
-   ```bash
-   cd with-supabase-app
-   ```
+上記設定により、毎日UTC午前1時15分（JST午前10時15分）に `curl` コマンドが実行され、アプリのURLにGETリクエストが送信されます。
+これにより、Supabaseデータベースへの定期的なアクセスが発生し、Sleep状態が回避されます。
 
-4. Rename `.env.example` to `.env.local` and update the following:
+**動作確認**:
 
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
-   ```
+GitHub Actionsの実行ログを確認することで、Pingが正常に送信されていることを確認できます。
 
-   Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://app.supabase.com/project/_/settings/api)
+1. GitHubリポジトリの `Actions` タブを選択
+2. `Prevent Supabase Sleep (Daily Ping)` ワークフローを選択
+3. 最新の実行ログ (`make_request` job) を確認
 
-5. You can now run the Next.js local development server:
+![GitHub Actions 実行ログ](public\action.png)
 
-   ```bash
-   npm run dev
-   ```
+## Vercelへのデプロイ
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+本アプリケーションは、[Vercel platform](https://vercel.com/) を利用してデプロイ・公開しています。
 
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
+**環境変数**:
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+Vercelへのデプロイ時に、以下の環境変数を設定する必要があります。
 
-## Feedback and issues
+```
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+# Dify (サーバーサイドでのみ使用)
+DIFY_API_KEY=your-dify-api-key
+```
 
-## More Supabase examples
-
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)

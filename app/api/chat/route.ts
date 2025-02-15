@@ -21,9 +21,8 @@ export async function POST(request: Request) {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
       return NextResponse.json(
-        { error: errorData.message || "Dify APIエラー" },
+        { error: "エラーが起きました。少し時間をおいてお願いします。" },
         { status: response.status }
       );
     }
@@ -33,7 +32,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Chat API Error:", error);
     return NextResponse.json(
-      { error: "チャットの処理中にエラーが発生しました" },
+      { error: "エラーが起きました。少し時間をおいてお願いします。" },
       { status: 500 }
     );
   }

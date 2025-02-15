@@ -111,7 +111,7 @@ export function ChatPage({ user }: { user: User }) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(`Dify APIエラー: ${errorData.message || '不明なエラー'}`);
+        throw new Error("エラーが起きました。少し時間をおいてお願いします。");
       }
 
       const data = await response.json();
@@ -157,7 +157,7 @@ export function ChatPage({ user }: { user: User }) {
           ...prev.messages,
           {
             role: "assistant",
-            content: error instanceof Error ? error.message : "申し訳ありません。エラーが発生しました。",
+            content: "エラーが起きました。少し時間をおいてお願いします。",
             tokens: 0,
             timestamp: new Date().toISOString(),
           },

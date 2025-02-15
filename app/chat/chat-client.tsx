@@ -58,11 +58,7 @@ export function ChatPage({ user }: { user: User }) {
 
   const fetchConversations = async () => {
     try {
-      const response = await fetch(`https://api.dify.ai/v1/conversations?user=${user.id}`, {
-        headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_DIFY_API_KEY}`,
-        },
-      });
+      const response = await fetch(`/api/conversations?user=${user.id}`);
       
       if (!response.ok) throw new Error("会話の取得に失敗しました");
       
@@ -100,18 +96,15 @@ export function ChatPage({ user }: { user: User }) {
         upload_file_id: file.id
       }));
 
-      const response = await fetch("https://api.dify.ai/v1/chat-messages", {
+      const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_DIFY_API_KEY}`,
         },
         body: JSON.stringify({
-          inputs: {},
           query: userMessage,
-          response_mode: "blocking",
-          conversation_id: currentChat.id || "",
-          user: user.id,
+          conversationId: currentChat.id || "",
+          userId: user.id,
           files: files || [],
         }),
       });
@@ -186,11 +179,7 @@ export function ChatPage({ user }: { user: User }) {
 
   const handleSelectChat = async (chatId: string) => {
     try {
-      const response = await fetch(`https://api.dify.ai/v1/messages?conversation_id=${chatId}&user=${user.id}`, {
-        headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_DIFY_API_KEY}`,
-        },
-      });
+      const response = await fetch(`/api/messages?conversation_id=${chatId}&user=${user.id}`);
       
       if (!response.ok) throw new Error("メッセージの取得に失敗しました");
       
@@ -242,11 +231,8 @@ export function ChatPage({ user }: { user: User }) {
         formData.append("file", file);
         formData.append("user", user.id);
 
-        const response = await fetch("https://api.dify.ai/v1/files/upload", {
+        const response = await fetch("/api/upload", {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_DIFY_API_KEY}`,
-          },
           body: formData,
         });
 

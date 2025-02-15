@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
+import { User } from "lucide-react";
 
 export default async function AuthButton() {
   const supabase = await createClient();
@@ -50,7 +51,11 @@ export default async function AuthButton() {
   }
   return user ? (
     <div className="flex items-center gap-4">
-      Hey, {user.email}!
+      <Link href="/profile">
+        <Button variant="ghost" size="icon" className="rounded-full">
+          <User className="h-5 w-5 text-muted-foreground" />
+        </Button>
+      </Link>
       <form action={signOutAction}>
         <Button type="submit" variant={"outline"}>
           Sign out

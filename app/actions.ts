@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
+  const terms = formData.get("terms")?.toString();
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
@@ -15,7 +16,15 @@ export const signUpAction = async (formData: FormData) => {
     return encodedRedirect(
       "error",
       "/sign-up",
-      "Email and password are required",
+      "メールアドレスとパスワードは必須です",
+    );
+  }
+
+  if (!terms) {
+    return encodedRedirect(
+      "error",
+      "/sign-up",
+      "利用規約への同意が必要です",
     );
   }
 
@@ -34,7 +43,7 @@ export const signUpAction = async (formData: FormData) => {
     return encodedRedirect(
       "success",
       "/sign-up",
-      "Thanks for signing up! Please check your email for a verification link.",
+      "ご登録ありがとうございます！確認メールをご確認ください。",
     );
   }
 };

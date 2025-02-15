@@ -3,6 +3,7 @@ import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { UserPlus } from "lucide-react";
 
@@ -66,6 +67,18 @@ export default async function Signup(props: {
               <p className="text-xs text-muted-foreground mt-1">
                 パスワードは6文字以上で設定してください
               </p>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox id="terms" name="terms" required />
+              <Label htmlFor="terms" className="text-sm leading-none">
+                <span className="text-muted-foreground">
+                  <Link href="/terms" className="text-primary hover:text-primary/90 font-medium underline underline-offset-4">
+                    利用規約
+                  </Link>
+                  に同意します
+                </span>
+              </Label>
             </div>
           </div>
 

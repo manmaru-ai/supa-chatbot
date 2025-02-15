@@ -60,6 +60,35 @@
     - GitHub Actions (CI/CD, 定期Ping)
     - VS Code (開発エディタ)
 
+## システム構成図
+
+```mermaid
+graph TB
+    subgraph Client["クライアント"]
+        B[ブラウザ]
+    end
+
+    subgraph Vercel["Vercel"]
+        N[Next.js App]
+        A[API Routes]
+    end
+
+    subgraph ExternalServices["外部サービス"]
+        S[(Supabase)]
+        D[Dify AI]
+    end
+
+    B <--> N
+    N <--> A
+    A <--> S
+    A <--> D
+    N <--> S
+
+    classDef default fill:#f9f9f9,stroke:#333,stroke-width:2px;
+    classDef external fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
+    class S,D external;
+```
+
 ## GitHub ActionsによるSupabaseのSleep対策
 
 Supabaseの無料プランでは、一定期間アクセスがないとデータベースがSleep状態になる場合があります。
@@ -123,3 +152,55 @@ SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 DIFY_API_KEY=your-dify-api-key
 ```
 
+## 開発期間・体制
+
+- **開発体制**: 個人開発
+- **開発期間**: 2025.2 ~ 2025.2 (約6時間)
+
+## 工夫した点・苦労した点
+
+### 1. AIモデルの最適化
+- Dify.aiのプロンプトエンジニアリングによる応答品質の向上
+- 高専特有の専門用語や概念に対する理解度の改善
+- コンテキスト管理による自然な会話の実現
+
+### 2. セキュリティとプライバシー
+- Supabaseのセキュリティ機能を活用したデータ保護
+- トークン使用量の制限と監視機能の実装
+- 個人情報の適切な取り扱いとプライバシー保護
+
+### 3. ユーザビリティの向上
+- 直感的なUIデザインの実現
+- レスポンスタイムの最適化
+- エラー時の適切なフィードバック提供
+
+### 4. 技術的なチャレンジ
+- Next.js 15のApp Routerの採用と最適化
+- Server ComponentsとClient Componentsの適切な使い分け
+- Supabaseとの効率的なデータ同期
+
+## 既知の課題と今後の展望
+
+### 現在の課題
+1. **パフォーマンス関連**
+   - 初期ローディング時間の改善
+   - 大規模ファイル処理時の最適化
+   - メモリ使用量の削減
+
+2. **機能面**
+   - チャット履歴の検索機能
+   - ファイル形式の対応拡大
+   - オフライン対応
+
+3. **UX/UI**
+   - モバイル端末でのUX改善
+   - ダークモード時の配色調整
+   - アクセシビリティの向上
+
+### 今後の展望
+
+- チャット履歴の検索機能追加
+- 音声入力機能の実装
+- AIモデルの精度向上
+- 多言語対応
+- 教育機関との連携

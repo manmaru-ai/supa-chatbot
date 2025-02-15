@@ -40,3 +40,35 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .specstory/
+
+# Supabase
+/supabase/*
+!supabase/config.toml
+
+# VSCode
+.vscode/
+*.code-workspace
+.history/
+
+# Database
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# OS files
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log

@@ -88,6 +88,23 @@ export function ChatPage({ user }: { user: User }) {
     setIsLoading(true);
 
     try {
+      // トークン使用量をチェック
+      const tokenCheckResponse = await fetch("/api/check-token-usage", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          estimatedTokens: Math.ceil(userMessage.length / 4), // 簡易的なトークン数推定
+        }),
+      });
+
+      if (!tokenCheckResponse.ok) {
+        const errorData = await tokenCheckResponse.json();
+        throw new Error(errorData.message || "トークン制限に達しました");
+      }
+
       const files = currentChat.files.map(file => ({
         type: file.type.startsWith("image/") ? "image" : "document",
         transfer_method: "local_file",
@@ -118,6 +135,19 @@ export function ChatPage({ user }: { user: User }) {
       const data = await response.json();
       const answer = data.answer as string;
       const newConversationId = data.conversation_id as string;
+
+      // トークン使用量を更新
+      const usedTokens = Math.ceil((userMessage.length + answer.length) / 4); // 簡易的なトークン数計算
+      await fetch("/api/update-token-usage", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          tokens: usedTokens,
+        }),
+      });
       
       setCurrentChat(prev => ({
         id: newConversationId,
@@ -132,7 +162,7 @@ export function ChatPage({ user }: { user: User }) {
           ...prev.messages,
           {
             role: "assistant",
-            content: "申し訳ありません。エラーが発生しました。",
+            content: error instanceof Error ? error.message : "申し訳ありません。エラーが発生しました。",
           },
         ],
       }));

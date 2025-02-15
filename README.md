@@ -1,4 +1,4 @@
-[![Next.js and Supabase Starter Kit - 高専ChatBot](public\kosen-chat.png)](https://kosen-ai-chatbot.vercel.app/)
+[![Next.js and Supabase Starter Kit - 高専ChatBot](https://kosen-ai-chatbot.vercel.app/kosen-chat.png)](https://kosen-ai-chatbot.vercel.app/)
 
 <h1 align="center">高専ChatBot</h1>
 
@@ -105,7 +105,7 @@ GitHub Actionsの実行ログを確認することで、Pingが正常に送信�
 2. `Prevent Supabase Sleep (Daily Ping)` ワークフローを選択
 3. 最新の実行ログ (`make_request` job) を確認
 
-![GitHub Actions 実行ログ](public\action.png)
+![GitHub Actions 実行ログ](https://kosen-ai-chatbot.vercel.app/action.png)
 
 ## Vercelへのデプロイ
 

@@ -45,7 +45,7 @@ export function ChatInterface({ user }: { user: User }) {
         upload_file_id: file.id
       }));
 
-      const result = await sendDifyRequest(userMessage, currentChat.id, files);
+      const result = await sendDifyRequest(userMessage, currentChat.id, files, user.id);
       const answer = result.answer as string;
       const newConversationId = result.conversation_id as string;
       
@@ -81,7 +81,7 @@ export function ChatInterface({ user }: { user: User }) {
 
   const handleSelectChat = async (chatId: string) => {
     try {
-      const response = await fetch(`https://api.dify.ai/v1/messages?conversation_id=${chatId}&user=abc-123`, {
+      const response = await fetch(`https://api.dify.ai/v1/messages?conversation_id=${chatId}&user=${user.id}`, {
         headers: {
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_DIFY_API_KEY}`,
         },
@@ -167,6 +167,7 @@ export function ChatInterface({ user }: { user: User }) {
             <FileUpload 
               onFileUpload={handleFileUpload}
               currentFiles={currentChat.files}
+              userId={user.id}
             />
             {currentChat.files.length > 0 && (
               <p className="text-sm text-gray-500">

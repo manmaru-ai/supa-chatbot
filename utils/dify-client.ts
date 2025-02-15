@@ -9,7 +9,8 @@ interface DifyFile {
 export async function sendDifyRequest(
   message: string, 
   conversationId?: string,
-  files?: DifyFile[]
+  files?: DifyFile[],
+  userId?: string
 ): Promise<any> {
   try {
     const response = await fetch("https://api.dify.ai/v1/chat-messages", {
@@ -23,7 +24,7 @@ export async function sendDifyRequest(
         query: message,
         response_mode: "blocking",
         conversation_id: conversationId || "",
-        user: "abc-123",
+        user: userId,
         files: files || [],
       }),
     });

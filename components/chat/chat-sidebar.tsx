@@ -24,11 +24,11 @@ export function ChatSidebar({
 
   useEffect(() => {
     fetchConversations();
-  }, []);
+  }, [user.id]);
 
   const fetchConversations = async () => {
     try {
-      const response = await fetch("https://api.dify.ai/v1/conversations?user=abc-123", {
+      const response = await fetch(`https://api.dify.ai/v1/conversations?user=${user.id}`, {
         headers: {
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_DIFY_API_KEY}`,
         },

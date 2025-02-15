@@ -10,10 +10,12 @@ interface UploadedFile {
 
 export function FileUpload({ 
   onFileUpload,
-  currentFiles = []
+  currentFiles = [],
+  userId
 }: { 
   onFileUpload: (files: UploadedFile[]) => void;
   currentFiles?: UploadedFile[];
+  userId: string;
 }) {
   const [isUploading, setIsUploading] = useState(false);
 
@@ -29,7 +31,7 @@ export function FileUpload({
         const file = files[i];
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("user", "abc-123");
+        formData.append("user", userId);
 
         const response = await fetch("https://api.dify.ai/v1/files/upload", {
           method: "POST",

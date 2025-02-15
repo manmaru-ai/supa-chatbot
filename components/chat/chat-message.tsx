@@ -1,37 +1,109 @@
-import { User, MessageCircle } from "lucide-react";
+import ReactMarkdown from 'react-markdown';
 import { cn } from "@/lib/utils";
+import { Message } from "@/types/chat";
+import remarkGfm from 'remark-gfm';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { ComponentPropsWithoutRef } from 'react';
 
-type Message = {
-  role: "user" | "assistant";
-  content: string;
+type CodeBlockProps = ComponentPropsWithoutRef<'code'> & {
+  inline?: boolean;
+  className?: string;
+};
+
+type PrismStyleObj = {
+  [key: string]: {
+    color?: string;
+    backgroundColor?: string;
+    fontStyle?: string;
+    fontWeight?: string;
+    textDecoration?: string;
+    verticalAlign?: string;
+    display?: string;
+    [key: string]: string | undefined;
+  };
 };
 
 export function ChatMessage({ message }: { message: Message }) {
-  const isUser = message.role === "user";
-
   return (
     <div
       className={cn(
-        "flex gap-3 p-4 rounded-lg",
-        isUser ? "bg-primary/10" : "bg-muted"
+        "flex w-full",
+        message.role === "assistant" ? "justify-start" : "justify-end"
       )}
     >
       <div
         className={cn(
-          "w-8 h-8 rounded-full flex items-center justify-center",
-          isUser ? "bg-primary text-primary-foreground" : "bg-foreground/10"
+          "flex max-w-[80%] rounded-lg px-4 py-2",
+          message.role === "assistant"
+            ? "bg-gray-100"
+            : "bg-blue-500 text-white"
         )}
       >
-        {isUser ? (
-          <User className="h-5 w-5" />
-        ) : (
-          <MessageCircle className="h-5 w-5" />
-        )}
-      </div>
-      <div className="flex-1">
-        <p className="text-sm leading-relaxed whitespace-pre-wrap">
-          {message.content}
-        </p>
+        <div className={cn(
+          "prose dark:prose-invert max-w-none",
+          message.role === "user" && "prose-invert"
+        )}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              code({ inline, className, children, ...props }: any) {
+                const match = /language-(\w+)/.exec(className || '');
+                return !inline && match ? (
+                  <SyntaxHighlighter
+                    style={vscDarkPlus as any}
+                    language={match[1]}
+                    PreTag="div"
+                    {...props}
+                  >
+                    {String(children).replace(/\n$/, '')}
+                  </SyntaxHighlighter>
+                ) : (
+                  <code className={className} {...props}>
+                    {children}
+                  </code>
+                );
+              },
+              table({ children }) {
+                return (
+                  <div className="overflow-x-auto">
+                    <table className="border-collapse border border-gray-300">
+                      {children}
+                    </table>
+                  </div>
+                );
+              },
+              th({ children }) {
+                return (
+                  <th className="border border-gray-300 px-4 py-2 bg-gray-100">
+                    {children}
+                  </th>
+                );
+              },
+              td({ children }) {
+                return (
+                  <td className="border border-gray-300 px-4 py-2">
+                    {children}
+                  </td>
+                );
+              },
+              a({ children, href }) {
+                return (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:text-blue-600"
+                  >
+                    {children}
+                  </a>
+                );
+              },
+            }}
+          >
+            {message.content}
+          </ReactMarkdown>
+        </div>
       </div>
     </div>
   );

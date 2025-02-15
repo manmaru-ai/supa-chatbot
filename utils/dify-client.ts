@@ -1,6 +1,16 @@
 "use server";
 
-export async function sendDifyRequest(message: string, conversationId?: string): Promise<any> {
+interface DifyFile {
+  type: string;
+  transfer_method: string;
+  upload_file_id: string;
+}
+
+export async function sendDifyRequest(
+  message: string, 
+  conversationId?: string,
+  files?: DifyFile[]
+): Promise<any> {
   try {
     const response = await fetch("https://api.dify.ai/v1/chat-messages", {
       method: "POST",
@@ -14,6 +24,7 @@ export async function sendDifyRequest(message: string, conversationId?: string):
         response_mode: "blocking",
         conversation_id: conversationId || "",
         user: "abc-123",
+        files: files || [],
       }),
     });
 

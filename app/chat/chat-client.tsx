@@ -348,9 +348,9 @@ export function ChatPage({ user }: { user: User }) {
           <div className="max-w-3xl mx-auto py-8 px-4">
             {currentChat.messages.length === 0 ? (
               <div className="text-center py-20">
-                <h2 className="text-2xl font-bold mb-2">お手伝いできることはありますか？</h2>
+                <h2 className="text-2xl font-bold mb-2">高専の質問に答えます！</h2>
                 <p className="text-gray-500">
-                  メッセージを入力してチャットを開始してください
+                  実験・課題・研究のことなど、高専に関連するものについてなんでも聞いてください。
                 </p>
               </div>
             ) : (

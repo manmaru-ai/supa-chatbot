@@ -219,4 +219,3 @@ DIFY_API_KEY=your-dify-api-key
 - 音声入力機能の実装
 - AIモデルの精度向上
 - 多言語対応
-- 教育機関との連携
